@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  voice-recognition-app:
+    build: .
+    container_name: voice-recognition-app
+    devices:
+      - "/dev/snd:/dev/snd"
+    environment:
+      - DISPLAY
+      - PULSE_SERVER=unix:/run/user/1000/pulse/native
+    volumes:
+      - "/tmp/.X11-unix:/tmp/.X11-unix"
+      - "~/.config/pulse/cookie:/root/.config/pulse/cookie"
+      - "/run/user/1000/pulse/native:/run/user/1000/pulse/native"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - audio
+
+  audio:
+    image: osx_audio
+    container_name: audio
+    privileged: true
+    devices:
+      - "/dev/snd:/dev/snd"
+    environment:
+      - AUDIODEV=hw:0,0
+    stdin_open: true
+    tty: true
